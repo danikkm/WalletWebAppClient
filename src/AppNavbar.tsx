@@ -32,9 +32,13 @@ export default class AppNavbar extends Component<{}, any> {
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
-            <NavItem>
-              <NavLink href="https://twitter.com/oktadev">@oktadev</NavLink>
+            
+            {/* <NavItem>
+              <NavLink href="/sign-in">Login</NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink href="/sign-up">Sign up</NavLink>
+            </NavItem> */}
             <NavItem>
               <NavLink href="https://github.com/oktadeveloper/okta-spring-boot-react-crud-example">
                 GitHub

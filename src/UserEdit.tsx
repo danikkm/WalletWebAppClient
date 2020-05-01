@@ -1,17 +1,16 @@
-import React, { Component, Props, ComponentType } from "react";
+import React from "react";
 import {
-  Route,
   Link,
   withRouter,
   RouteComponentProps,
-  match,
 } from "react-router-dom";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
-import AppNavbar from "./AppNavbar";
 import { createApiClient, User } from "./api";
 import history from "./history";
 
 import MaterialTable from "material-table";
+
+import "./styles/UserMenu.css";
 
 export type AppState = {
   users?: User[];
@@ -49,24 +48,24 @@ export class UserEdit extends React.Component<
 
   state: AppState = {
     item: "",
-    account: "",
+    account: {},
     edditing: false,
     columns: {},
-    tableData: "",
+    tableData: {},
   };
 
   constructor(props: RouteComponentProps<MatchParams>) {
     super(props);
     this.state = {
       item: this.emptyItem,
-      account: this.emptyAccount,
+      account: [],
       edditing: false,
       columns: [
         { title: "Name", field: "name" },
         { title: "Type", field: "type" },
         { title: "Currency", field: "currency" },
       ],
-      tableData: this.emptyAccount,
+      tableData: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -117,8 +116,9 @@ export class UserEdit extends React.Component<
     //this.props.history.push('/users')
   }
 
-  renderMainView = (item: any) => {
+  renderMainView = (item: any, account: any) => {
     const title = <h2>{item.id ? "Edit user" : "Add user"}</h2>;
+
     return (
       <div>
         <Container>
@@ -181,17 +181,9 @@ export class UserEdit extends React.Component<
                 />
               </FormGroup>
             </div>
-            <h2
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              Accounts
-            </h2>
-            {this.renderAccountsTable()}
-            <FormGroup>
+
+            {this.renderAccountsTable(account)}
+            <FormGroup className="form-group">
               <Button color="primary" type="submit">
                 Save
               </Button>{" "}
@@ -205,14 +197,17 @@ export class UserEdit extends React.Component<
     );
   };
 
-  renderAccountsTable = () => {
+  renderAccountsTable = (account: any) => {
     return (
       <MaterialTable
-        title="Editable Example"
         columns={this.state.columns}
-        data={this.state.account}
+        data={account}
+        options={{
+          selection: true,
+          actionsColumnIndex: -1,
+        }}
         editable={{
-          onRowAdd: (newData) =>
+          onRowAdd: (newData: any) =>
             new Promise((resolve) => {
               setTimeout(() => {
                 resolve();
@@ -225,7 +220,7 @@ export class UserEdit extends React.Component<
                 });
               }, 600);
             }),
-          onRowUpdate: (newData, oldData) =>
+          onRowUpdate: (newData: any, oldData: any) =>
             new Promise((resolve) => {
               setTimeout(() => {
                 resolve();
@@ -242,7 +237,7 @@ export class UserEdit extends React.Component<
                 }
               }, 600);
             }),
-          onRowDelete: (oldData) =>
+          onRowDelete: (oldData: any) =>
             new Promise((resolve) => {
               setTimeout(() => {
                 resolve();
@@ -256,6 +251,7 @@ export class UserEdit extends React.Component<
               }, 600);
             }),
         }}
+        title="Accounts"
       />
     );
   };
@@ -263,134 +259,10 @@ export class UserEdit extends React.Component<
   render() {
     const { item, account, edditing } = this.state;
     const title = <h2>{item.id ? "Edit user" : "Add user"}</h2>;
-    if (edditing) {
-      return (
-        <div>
-          <AppNavbar />
-          {this.renderMainView(item)}
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <AppNavbar />
-          <Container>
-            {title}
-            <Form onSubmit={this.handleSubmit}>
-              <FormGroup>
-                <Label for="username">Username</Label>
-                <Input
-                  type="text"
-                  name="username"
-                  id="usernmae"
-                  value={item.username || ""}
-                  onChange={this.handleChange}
-                  autoComplete="username"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="password">Password</Label>
-                <Input
-                  type="text"
-                  name="password"
-                  id="password"
-                  value={item.password || ""}
-                  onChange={this.handleChange}
-                  autoComplete="password"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="email">Email</Label>
-                <Input
-                  type="text"
-                  name="email"
-                  id="email"
-                  value={item.email || ""}
-                  onChange={this.handleChange}
-                  autoComplete="email"
-                />
-              </FormGroup>
-              <div className="row">
-                <FormGroup className="col-md-6 mb-3">
-                  <Label for="name">Name</Label>
-                  <Input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={item.name || ""}
-                    onChange={this.handleChange}
-                    autoComplete="name"
-                  />
-                </FormGroup>
-                <FormGroup className="col-md-6 mb-3">
-                  <Label for="surname">Surname</Label>
-                  <Input
-                    type="text"
-                    name="surname"
-                    id="surname"
-                    value={item.surname || ""}
-                    onChange={this.handleChange}
-                    autoComplete="surname"
-                  />
-                </FormGroup>
-              </div>
-              <h2
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Accounts
-              </h2>
-              {/* <div className="row">
-                <FormGroup className="col-md-4 mb-3">
-                  <Label for="accountName">Account name</Label>
-                  <Input
-                    type="text"
-                    name="name"
-                    id="accountName"
-                    value={account.name || ""}
-                    onChange={this.accountHandleChange}
-                    autoComplete="accountName"
-                  />
-                </FormGroup>
-                <FormGroup className="col-md-4 mb-3">
-                  <Label for="accountType">Type</Label>
-                  <Input
-                    type="text"
-                    name="type"
-                    id="accountType"
-                    value={account.type || ""}
-                    onChange={this.accountHandleChange}
-                    autoComplete="accountType"
-                  />
-                </FormGroup>
-                <FormGroup className="col-md-4 mb-3">
-                  <Label for="currency">Currency</Label>
-                  <Input
-                    type="text"
-                    name="currency"
-                    id="currency"
-                    value={account.currency || ""}
-                    onChange={this.accountHandleChange}
-                    autoComplete="currency"
-                  />
-                </FormGroup>
-              </div> */}
-              <FormGroup>
-                <Button color="primary" type="submit">
-                  Save
-                </Button>{" "}
-                <Button color="secondary" tag={Link} to="/users">
-                  Cancel
-                </Button>
-              </FormGroup>
-            </Form>
-          </Container>
-        </div>
-      );
-    }
+
+    return (
+      <div className="user-wrapper">{this.renderMainView(item, account)}</div>
+    );
   }
 }
 

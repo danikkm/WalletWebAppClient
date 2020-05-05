@@ -1,22 +1,49 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import history from "../history";
 // import MainPage from "../MainPage";
 import "../styles/App.css";
+import { createApiClient, User } from "../api";
+
+const api = createApiClient();
 
 export default class Login extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       showComponent: false,
+      login: "",
+      password: "",
     };
     this._onButtonClick = this._onButtonClick.bind(this);
   }
 
-  _onButtonClick() {
+  async _onButtonClick() {
     this.setState({
       showComponent: true,
     });
-    history.push("/main");
+
+    console.log(this.state.password);
+
+    const user = await api.getUsersWithLogin(
+      this.state.login,
+      this.state.password
+    );
+    console.log(user);
+
+    history.push({
+      pathname: "/users",
+      state: {
+        users: user,
+      },
+    });
+  }
+
+  handleLoginChange(event: { target: { value: any } }) {
+    this.setState({ login: event.target.value });
+  }
+
+  handlePasswordChange(event: { target: { value: any } }) {
+    this.setState({ password: event.target.value });
   }
 
   render() {
@@ -27,20 +54,26 @@ export default class Login extends React.Component<any, any> {
             <h3>Sign In</h3>
 
             <div className="form-group">
-              <label>Email address</label>
+              <label>Login</label>
               <input
-                type="email"
+                id="login"
+                type="login"
                 className="form-control"
-                placeholder="Enter email"
+                placeholder="Enter login"
+                value={this.state.login}
+                onChange={(event) => this.handleLoginChange(event)}
               />
             </div>
 
             <div className="form-group">
               <label>Password</label>
               <input
+                id="password"
                 type="password"
                 className="form-control"
                 placeholder="Enter password"
+                value={this.state.password}
+                onChange={(event) => this.handlePasswordChange(event)}
               />
             </div>
 
@@ -58,7 +91,7 @@ export default class Login extends React.Component<any, any> {
             </div>
 
             <button
-              type="submit"
+              type="button"
               className="btn btn-primary btn-block"
               onClick={this._onButtonClick}
             >

@@ -21,6 +21,7 @@ export type AppState = {
 export default class UserTable extends React.Component<{}, AppState> {
   state: AppState = {};
   async componentDidMount() {
+
     this.setState({
       users: await api.getUsers(),
     });

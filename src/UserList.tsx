@@ -9,13 +9,11 @@ export type AppState = {
   users?: User[];
 };
 
-const api = createApiClient();
-
 export class UserList extends React.PureComponent<{}, AppState> {
   state: AppState = {};
   async componentDidMount() {
     this.setState({
-      users: await api.getUsers(),
+      users: [],
     });
   }
 

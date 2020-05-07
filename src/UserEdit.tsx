@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  Link,
-  withRouter,
-  RouteComponentProps,
-} from "react-router-dom";
+import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import { createApiClient, User } from "./api";
 import history from "./history";
@@ -18,7 +14,6 @@ export type AppState = {
   account: any;
   edditing: boolean;
   columns: any;
-  tableData: any;
 };
 
 const api = createApiClient();
@@ -51,7 +46,6 @@ export class UserEdit extends React.Component<
     account: {},
     edditing: false,
     columns: {},
-    tableData: {},
   };
 
   constructor(props: RouteComponentProps<MatchParams>) {
@@ -65,7 +59,6 @@ export class UserEdit extends React.Component<
         { title: "Type", field: "type" },
         { title: "Currency", field: "currency" },
       ],
-      tableData: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -75,6 +68,8 @@ export class UserEdit extends React.Component<
 
   async componentDidMount() {
     if (this.props.match.params.id !== "new") {
+      console.log(this.props.match.params.id);
+
       const id = this.props.match.params.id;
       const user = ((await api.getUserById(id)) as unknown) as User;
       const accounts = user.accounts;
@@ -107,7 +102,7 @@ export class UserEdit extends React.Component<
 
   async handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
-    const { item, account, tableData } = this.state;
+    const { item, account } = this.state;
     item.accounts = account;
     //item.accounts.push(account);
     console.log(item);
@@ -138,7 +133,7 @@ export class UserEdit extends React.Component<
             <FormGroup>
               <Label for="password">Password</Label>
               <Input
-                type="text"
+                type="password"
                 name="password"
                 id="password"
                 value={item.password || ""}
@@ -231,6 +226,7 @@ export class UserEdit extends React.Component<
                     data[data.indexOf(oldData)] = newData;
 
                     this.setState({ account: data });
+                    console.log(this.state.account);
 
                     // return { ...prevState, data };
                   });

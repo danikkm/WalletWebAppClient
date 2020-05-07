@@ -11,6 +11,7 @@ import { createApiClient, User } from "../api";
 import "../styles/UserMenu.css";
 import { Button, ButtonGroup, Container } from "reactstrap";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const api = createApiClient();
 
@@ -21,12 +22,10 @@ export type AppState = {
 export default class UserTable extends React.Component<{}, AppState> {
   state: AppState = {};
   async componentDidMount() {
-
     this.setState({
-      users: await api.getUsers(),
+      users: await api.getUserByUsername(Cookies.get("username") as string),
     });
   }
-
   async remove(username: string) {
     await api.deleteUser(username);
     let realUsers: User[] = this.state.users || [];
@@ -36,12 +35,15 @@ export default class UserTable extends React.Component<{}, AppState> {
     this.setState({ users: updatedUsers });
   }
 
-  renderUsers = (users: User[]) => {
-    const filteredUsers = users.filter(
-      (u) => u.name.toLowerCase() + u.surname.toUpperCase()
-    );
+  
 
-    return filteredUsers.map((user) => (
+  renderUsers = (users: User[]) => {
+    console.log(users);
+    // const filteredUsers = users.filter(
+    //   (u) => u.name.toLowerCase() + u.surname.toUpperCase()
+    // );
+
+    return users.map((user) => (
       <TableRow key={user.id}>
         <TableCell component="th" scope="row">
           {user.id}

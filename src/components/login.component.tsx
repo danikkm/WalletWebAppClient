@@ -3,8 +3,10 @@ import history from "../history";
 // import MainPage from "../MainPage";
 import "../styles/App.css";
 import { createApiClient, User } from "../api";
+import Cookies from 'js-cookie';
 
 const api = createApiClient();
+
 
 export default class Login extends React.Component<any, any> {
   constructor(props: any) {
@@ -22,19 +24,20 @@ export default class Login extends React.Component<any, any> {
       showComponent: true,
     });
 
-    console.log(this.state.password);
 
-    const user = await api.getUsersWithLogin(
+    const user = await api.getUser(
       this.state.login,
       this.state.password
     );
     console.log(user);
+    console.log(this.state.login);
+  
 
-    history.push({
-      pathname: "/users",
-      state: {
-        users: user,
-      },
+    Cookies.set("username", this.state.login)
+    Cookies.set("user", JSON.stringify(user), { expires: 1, path: '' })
+    
+    this.props.history.push({
+      pathname: "/home"
     });
   }
 
